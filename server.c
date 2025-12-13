@@ -2,6 +2,22 @@
 #include <stdlib.h>
 #include<unistd.h>
 #include<arpa/inet.h>
+#include<pthread.h>
+
+void *handle_connection(void *arg) {
+  int client_fd = *(int*)arg;
+
+   char buff[256];
+    int n;
+    while((n = (int)read(client_fd, buff, sizeof(buff))) > 0) {
+      write(client_fd, buff, n);
+      dprintf(STDOUT_FILENO, "Client: %d\t write: %s\n", client_fd, buff);
+    }
+
+    close(client_fd);
+    printf("Disconnected\n");
+    return NULL;
+}
 
 int main() {
   int fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -25,6 +41,7 @@ int main() {
   }
 
   while(1) {
+    pthread_t t;
     int client_fd = accept(fd, NULL, NULL);
     if(client_fd < 0) {
       perror("Client fd");
@@ -32,14 +49,12 @@ int main() {
     }
     printf("Connection found: %d\n", client_fd);
 
-    char buff[256];
-    int n;
-    while((n = (int)read(client_fd, buff, sizeof(buff))) > 0) {
-      write(client_fd, buff, n);
-    }
+    int *pdf = malloc(sizeof(int));
+    *pdf = client_fd;
 
-    close(client_fd);
-    printf("Disconected\n");
+    pthread_create(&t, NULL, handle_connection, pdf);
+
+    pthread_detach(t);
   }
 
   return 0;
