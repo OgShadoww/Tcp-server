@@ -21,12 +21,13 @@ int main() {
     exit(EXIT_FAILURE);
   }
     
-  char buff[128];
+  char buff[512];
   int n;
   while((n = (int)read(STDIN_FILENO, buff, sizeof(buff))) > 0) { 
     if(n >= 4 && !memcmp(buff, "quit", 4)) {
       break;
     }
+    write(STDOUT_FILENO, "> ", 2);
     write(sock, buff, n);
 
     int r = read(sock, buff, sizeof(buff));

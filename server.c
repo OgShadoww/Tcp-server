@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include <stdlib.h>
+#include<stdlib.h>
 #include<unistd.h>
 #include<arpa/inet.h>
 #include<pthread.h>
@@ -7,11 +7,11 @@
 void *handle_connection(void *arg) {
   int client_fd = *(int*)arg;
 
-   char buff[256];
+   char buff[512];
     int n;
     while((n = (int)read(client_fd, buff, sizeof(buff))) > 0) {
       write(client_fd, buff, n);
-      dprintf(STDOUT_FILENO, "Client: %d\t write: %s\n", client_fd, buff);
+      dprintf(STDOUT_FILENO, "Client: %d; write: %s\n", client_fd, buff);
     }
 
     close(client_fd);
@@ -55,6 +55,8 @@ int main() {
     pthread_create(&t, NULL, handle_connection, pdf);
 
     pthread_detach(t);
+
+    free(pdf);
   }
 
   return 0;
