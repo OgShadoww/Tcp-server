@@ -6,6 +6,7 @@
 
 void *handle_connection(void *arg) {
   int client_fd = *(int*)arg;
+  free(arg);
 
    char buff[512];
     int n;
@@ -15,7 +16,7 @@ void *handle_connection(void *arg) {
     }
 
     close(client_fd);
-    printf("Disconnected\n");
+    dprintf(STDOUT_FILENO, "Disconnected\n");
     return NULL;
 }
 
@@ -47,7 +48,7 @@ int main() {
       perror("Client fd");
       exit(-1);
     }
-    printf("Connection found: %d\n", client_fd);
+    dprintf(STDOUT_FILENO, "Connection found: %d\n", client_fd);
 
     int *pdf = malloc(sizeof(int));
     *pdf = client_fd;
@@ -55,8 +56,6 @@ int main() {
     pthread_create(&t, NULL, handle_connection, pdf);
 
     pthread_detach(t);
-
-    free(pdf);
   }
 
   return 0;
