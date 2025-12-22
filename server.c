@@ -12,7 +12,7 @@ void *handle_connection(void *arg) {
     int n;
     while((n = (int)read(client_fd, buff, sizeof(buff))) > 0) {
       write(client_fd, buff, n);
-      dprintf(STDOUT_FILENO, "Client: %d; write: %s\n", client_fd, buff);
+      dprintf(STDOUT_FILENO, "Client %d: %.*s\n", client_fd, n, buff);
     }
 
     close(client_fd);
@@ -40,6 +40,7 @@ int main() {
     perror("listen");
     exit(-1);
   }
+  dprintf(STDOUT_FILENO, "Listening...\n");
 
   while(1) {
     pthread_t t;

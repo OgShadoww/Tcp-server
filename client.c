@@ -31,7 +31,7 @@ int main() {
     write(sock, buff, n);
 
     int r = read(sock, buff, sizeof(buff));
-    if(r > 0) dprintf(STDOUT_FILENO, "%s", buff);
+    if (r > 0) write(STDOUT_FILENO, buff, r);
   }
 
   close(sock);
