@@ -24,7 +24,7 @@ int main() {
   int fd = socket(AF_INET, SOCK_STREAM, 0);
   if(fd < 0) {
     perror("socket");
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
 
   struct sockaddr_in fd_adr;
@@ -34,11 +34,11 @@ int main() {
 
   if(bind(fd, (struct sockaddr*)&fd_adr, sizeof(fd_adr)) < 0) {
     perror("bind");
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
   if(listen(fd, 5) < 0) {
     perror("listen");
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
   dprintf(STDOUT_FILENO, "Listening...\n");
 
@@ -47,7 +47,7 @@ int main() {
     int client_fd = accept(fd, NULL, NULL);
     if(client_fd < 0) {
       perror("Client fd");
-      exit(-1);
+      exit(EXIT_FAILURE);
     }
     dprintf(STDOUT_FILENO, "Connection found: %d\n", client_fd);
 
