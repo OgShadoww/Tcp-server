@@ -1,3 +1,213 @@
-# TCP Echo Server
+# Simple Multi-Threaded TCP Server (C)
 
-TCP server in C, using sokects and threads 
+A lightweight multi-threaded TCP client–server application written in pure C using POSIX sockets and pthreads.
+
+This project demonstrates:
+
+* Low-level socket programming (IPv4, TCP)
+* Thread-per-connection server design
+* Basic network I/O
+* Running services persistently on a VPS
+
+---
+
+## 📦 Features
+
+* Multi-client support using `pthread`
+* Listens on all network interfaces (`INADDR_ANY`)
+* Simple echo-style request/response logic
+* Graceful connection handling
+* Ready for deployment on a public VPS
+
+---
+
+## 🗂 Project Structure
+
+```
+.
+├── server.c     # TCP server implementation
+├── client.c     # TCP client implementation
+└── README.md    # Project documentation
+```
+
+---
+
+## ⚙️ Requirements
+
+* Linux / macOS
+* GCC or Clang
+* POSIX threads (pthreads)
+
+---
+
+## 🛠 Build
+
+Compile both server and client:
+
+```bash
+gcc -Wall -Wextra -O2 server.c -o server -lpthread
+gcc -Wall -Wextra -O2 client.c -o client
+```
+
+---
+
+## 🚀 Run Locally
+
+### Start the server
+
+```bash
+./server
+```
+
+You should see:
+
+```
+Listening...
+```
+
+---
+
+### Run the client
+
+Edit `client.c` and replace:
+
+```c
+inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+```
+
+With:
+
+```c
+inet_pton(AF_INET, "YOUR_SERVER_IP", &addr.sin_addr);
+```
+
+Then:
+
+```bash
+./client
+```
+
+Type messages and see echoed responses from the server.
+
+---
+
+## 🌍 Run on a VPS (Public Access)
+
+### 1. Open the port
+
+```bash
+sudo ufw allow 8080/tcp
+```
+
+---
+
+### 2. Run server persistently (systemd)
+
+Move binary:
+
+```bash
+sudo mv server /usr/local/bin/myserver
+sudo chmod +x /usr/local/bin/myserver
+```
+
+Create service:
+
+```bash
+sudo nano /etc/systemd/system/myserver.service
+```
+
+```ini
+[Unit]
+Description=My TCP Server
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/myserver
+Restart=always
+RestartSec=2
+User=root
+WorkingDirectory=/usr/local/bin
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable + start:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable myserver
+sudo systemctl start myserver
+```
+
+Logs:
+
+```bash
+journalctl -u myserver -f
+```
+
+---
+
+## 🔍 Debugging & Monitoring
+
+Check listening ports:
+
+```bash
+sudo ss -tulnp | grep 8080
+```
+
+Scan externally:
+
+```bash
+nmap -p 8080 YOUR_SERVER_IP
+```
+
+---
+
+## 🔐 Security Notes
+
+* Do NOT expose databases or admin ports publicly
+* Always use SSH keys instead of passwords
+* Add a firewall rule for only required ports
+* Consider TLS (OpenSSL) for encrypted connections
+
+---
+
+## 📈 Future Improvements
+
+* Switch to epoll instead of thread-per-client
+* Add TLS (OpenSSL)
+* Add authentication
+* Implement a simple protocol
+* Add logging
+* Dockerize for CI/CD
+
+---
+
+## 🧠 Learning Goals
+
+This project helps you practice:
+
+* TCP/IP networking
+* POSIX threads
+* System-level debugging
+* VPS deployment
+* Linux process management
+* DevOps basics
+
+---
+
+## 📜 License
+
+MIT License
+
+---
+
+## ✨ Author
+
+Orest
+
+Built as part of a low-level networking & DevOps learning journey.
+
